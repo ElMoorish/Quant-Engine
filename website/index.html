@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quanti Engine — Institutional Order-Flow Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080B11;
+      --card-bg: #121724;
+      --card-border: #202A3E;
+      --card-highlight: #3C5073;
+      --milk-white: #FDFEFF;
+      --milk-cream: #F0F5FC;
+      --milk-pearl: #C3D0E2;
+      --milk-muted: #91A0B9;
+      --cyan: #38BDF8;
+      --emerald: #34D399;
+      --crimson: #FB7185;
+      --gold: #F6D278;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--milk-white);
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(52, 211, 153, 0.05) 0%, transparent 40%);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(32, 42, 62, 0.6);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--cyan), #818CF8);
+      color: #080B11;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-link { color: var(--milk-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-link:hover { color: var(--milk-white); }
+    
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 90px 0 60px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(18, 23, 36, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cyan);
+      margin-bottom: 28px;
+      backdrop-filter: blur(8px);
+    }
+    .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
+    h1 {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--milk-white) 30%, var(--milk-pearl) 70%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 18px;
+      color: var(--milk-muted);
+      max-width: 680px;
+      margin: 0 auto 40px;
+      font-weight: 400;
+    }
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--milk-white);
+      color: #080B11;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(253, 254, 255, 0.15);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.25);
+      background: var(--cyan);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      color: var(--milk-pearl);
+      border: 1px solid var(--card-border);
+      padding: 16px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      border-color: var(--cyan);
+      color: var(--milk-white);
+    }
+
+    /* Stats Grid */
+    .telemetry-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 50px 0 80px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--milk-muted); margin-bottom: 8px; font-weight: 600; }
+    .card-val { font-size: 26px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .card-sub { font-size: 12px; color: var(--milk-muted); margin-top: 6px; }
+
+    /* Features */
+    .section-title { font-size: 32px; font-weight: 700; margin-bottom: 36px; text-align: center; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+    .feature-card {
+      background: rgba(18, 23, 36, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 32px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-highlight);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--cyan);
+      font-size: 20px;
+    }
+    .feature-title { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+    .feature-text { font-size: 14px; color: var(--milk-muted); line-height: 1.6; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 11, 17, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      width: 90%;
+      max-width: 520px;
+      padding: 32px;
+      position: relative;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--milk-muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(8, 11, 17, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--milk-white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      margin: 16px 0 20px;
+    }
+    .input-field:focus { outline: none; border-color: var(--cyan); }
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 40px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--milk-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span>⚡ QUANTI ENGINE</span>
+        <span class="logo-badge">INSTITUTIONAL v1.0</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#features" class="nav-link">Architecture</a>
+        <a href="#setup" class="nav-link">Setup Guide</a>
+        <a href="https://t.me" target="_blank" class="nav-link">Telegram VIP</a>
+        <button class="btn-secondary" style="padding: 8px 18px; font-size: 13px;" onclick="openModal()">Get 24H Trial Key</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="pill">
+        <span class="pill-dot"></span>
+        Zero Broker Trace • Shared-Memory MT5 Bridge
+      </div>
+      <h1>Sub-Microsecond <span>Order-Flow Alpha</span> For MetaTrader 5</h1>
+      <p class="hero-desc">
+        Deterministic diagonal imbalance footprint, real-time Hurst Exponent regime detection, and dual-tier auto-shield execution for institutional traders.
+      </p>
+
+      <div class="cta-group">
+        <a href="QuantiEngine-v1.0.zip" class="btn-primary" download>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+          Download Windows Client (3.2 MB)
+        </a>
+        <button class="btn-secondary" onclick="openModal()">
+          Request 24H Trial Activation
+        </button>
+      </div>
+    </section>
+
+    <!-- Telemetry Cards -->
+    <div class="telemetry-bar">
+      <div class="card">
+        <div class="card-label">Execution Latency</div>
+        <div class="card-val" style="color: var(--emerald);">&lt; 350 ns</div>
+        <div class="card-sub">Ring buffer shared memory</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Regime Invariance</div>
+        <div class="card-val" style="color: var(--cyan);">H = 0.78</div>
+        <div class="card-sub">Brownian noise filter active</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Protection System</div>
+        <div class="card-val" style="color: var(--gold);">+0.70R Shield</div>
+        <div class="card-sub">Auto Break-Even lock</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Curated Portfolio</div>
+        <div class="card-val" style="color: var(--milk-white);">BTC • NAS • US30</div>
+        <div class="card-sub">Calibrated risk parameters</div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div id="features">
+      <h2 class="section-title">Institutional Terminal Architecture</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Real-Time Footprint & Imbalance</h3>
+          <p class="feature-text">High-resolution 300% diagonal buy/sell order-flow clusters, Session Volume Profile (VAH/VAL/VPOC), and Cumulative Volume Delta.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3 class="feature-title">Two-Tier Capital Defense</h3>
+          <p class="feature-text">Automatic Break-Even Shield at +0.70R excursion and two-tier trailing stop (+0.40R locked at +1.00R) eliminates drawdown risks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📡</div>
+          <h3 class="feature-title">Direct Discord & Telegram Alerts</h3>
+          <p class="feature-text">Zero cloud lag. Instant institutional telemetry embeds dispatched directly to your private signals channel via background curl piping.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trial HWID Request Modal -->
+  <div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3 style="font-size: 22px; margin-bottom: 8px;">Request 24H Trial License</h3>
+      <p style="font-size: 13.5px; color: var(--milk-muted);">
+        1. Download and run <code>quanti-engine.exe</code>.<br>
+        2. Copy your 64-character <strong>Hardware ID (HWID)</strong>.<br>
+        3. Paste it below or send to Telegram support to receive your instant 24H key.
+      </p>
+      <input type="text" id="hwidInput" class="input-field" placeholder="Paste your 64-character Hardware ID here...">
+      <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="submitHwid()">
+        Copy Activation Request Message
+      </button>
+      <div id="copyFeedback" style="font-size: 12px; color: var(--emerald); text-align: center; margin-top: 10px; display: none;">
+        ✓ Message copied! Paste it in Telegram to receive your key.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      Quanti Engine &bull; Institutional Quantitative Systems &bull; Built with Rust & egui
+    </div>
+  </footer>
+
+  <script>
+    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function submitHwid() {
+      const hwid = document.getElementById('hwidInput').value.trim();
+      const text = hwid ? `Hello, please activate my Quanti Engine 24H Trial for HWID:\n${hwid}` : 'Hello, I would like to request a 24H Quanti Engine trial.';
+      navigator.clipboard.writeText(text);
+      const fb = document.getElementById('copyFeedback');
+      fb.style.display = 'block';
+      setTimeout(() => fb.style.display = 'none', 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "telegram_bot_token": "",
+  "telegram_vip_group_id": "",
+  "telegram_public_group_id": "",
+  "discord_webhook_url": "",
+  "send_to_vip": true,
+  "send_to_public": true,
+  "send_to_discord": true,
+  "alert_on_trade_open": true,
+  "alert_on_break_even": true,
+  "alert_on_trade_close": true,
+  "alert_daily_report": true
+}
